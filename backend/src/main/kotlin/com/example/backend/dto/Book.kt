@@ -1,14 +1,12 @@
 package com.example.backend.dto
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
 
-/**
- * DTO - Data Transfer Object.
- * Представление сущности - книга.
- *
- * */
+@Table
 data class Book(
-        @Id var id: Long? = null,
+        @Id
+        var id: Long? = null,
         var name: String? = null,
         var author: String? = null,
         var numberOfPages : Int? = null,

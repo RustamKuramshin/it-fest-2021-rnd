@@ -1,28 +1,32 @@
 package com.example.backend.services
 
 import com.example.backend.dto.Book
+import com.example.backend.repositories.BookRepository
 import org.springframework.stereotype.Service
 
 @Service
-class BookServiceImpl: BookService {
+class BookServiceImpl(
+    private val bookRepository: BookRepository
+): BookService {
 
-    override suspend fun getBooks() {
+    override fun getBooks(): List<Book> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getBook(id: Long) {
+    override fun getBook(id: Long): Book {
         TODO("Not yet implemented")
     }
 
-    override suspend fun createBook(id: Long, book: Book) {
+    override fun createBook(id: Long, book: Book): Book {
         TODO("Not yet implemented")
     }
 
-    override suspend fun updateBook(id: Long, book: Book) {
+    override fun updateBook(id: Long, book: Book): Book {
         TODO("Not yet implemented")
     }
 
-    override suspend fun deleteBook(id: Long) {
+    override fun deleteBook(id: Long) {
         TODO("Not yet implemented")
     }
+
 }

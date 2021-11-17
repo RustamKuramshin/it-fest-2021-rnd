@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="run frontend tests" type="JavaScriptTestRunnerJest">
+    <node-interpreter value="project" />
+    <node-options value="" />
+    <jest-package value="$PROJECT_DIR$/frontend/node_modules/react-scripts" />
+    <working-dir value="$PROJECT_DIR$/frontend" />
+    <envs />
+    <scope-kind value="TEST" />
+    <test-file value="$PROJECT_DIR$/frontend/src/App.test.tsx" />
+    <test-names>
+      <test-name value="renders learn react link" />
+    </test-names>
+    <method v="2" />
+  </configuration>
+</component>

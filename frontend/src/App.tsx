@@ -1,18 +1,27 @@
 /* eslint-disable max-classes-per-file */
 import * as React from "react";
+import logo from './logo.png';
 
-import { Menu, MenuItem } from "@blueprintjs/core";
-import { IExampleProps } from "@blueprintjs/docs-theme";
+import {Menu, MenuItem} from "@blueprintjs/core";
+import {IExampleProps} from "@blueprintjs/docs-theme";
+import {HotkeysProvider} from "@blueprintjs/core";
 import {
-    Cell,
     Column,
     ColumnHeaderCell,
-    CopyCellsMenuItem,
+    CopyCellsMenuItem, EditableCell2,
     IMenuContext,
     SelectionModes,
     Table2,
     Utils,
 } from "@blueprintjs/table";
+import {Icon, IconSize} from "@blueprintjs/core";
+
+// CSS
+import 'normalize.css';
+import '@blueprintjs/core/lib/css/blueprint.css';
+import '@blueprintjs/icons/lib/css/blueprint-icons.css';
+import '@blueprintjs/table/lib/css/table.css';
+import './App.css';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const books: any[] = require("./books.json");
@@ -25,14 +34,15 @@ interface ISortableColumn {
 }
 
 abstract class AbstractSortableColumn implements ISortableColumn {
-    constructor(protected name: string, protected index: number) { }
+    constructor(protected name: string, protected index: number) {
+    }
 
     public getColumn(getCellData: ICellLookup, sortColumn: ISortCallback) {
         const cellRenderer = (rowIndex: number, columnIndex: number) => (
-            <Cell>{getCellData(rowIndex, columnIndex)}</Cell>
+            <EditableCell2 value={getCellData(rowIndex, columnIndex)}/>
         );
         const menuRenderer = this.renderMenu.bind(this, sortColumn);
-        const columnHeaderCellRenderer = () => <ColumnHeaderCell name={this.name} menuRenderer={menuRenderer} />;
+        const columnHeaderCellRenderer = () => <ColumnHeaderCell name={this.name} menuRenderer={menuRenderer}/>;
         return (
             <Column
                 cellRenderer={cellRenderer}
@@ -52,8 +62,8 @@ class TextSortableColumn extends AbstractSortableColumn {
         const sortDesc = () => sortColumn(this.index, (a, b) => this.compare(b, a));
         return (
             <Menu>
-                <MenuItem icon="sort-asc" onClick={sortAsc} text="Sort Asc" />
-                <MenuItem icon="sort-desc" onClick={sortDesc} text="Sort Desc" />
+                <MenuItem icon="sort-asc" onClick={sortAsc} text="Sort Asc"/>
+                <MenuItem icon="sort-desc" onClick={sortDesc} text="Sort Desc"/>
             </Menu>
         );
     }
@@ -63,7 +73,7 @@ class TextSortableColumn extends AbstractSortableColumn {
     }
 }
 
-class TableSortableExample extends React.PureComponent<IExampleProps> {
+export default class BooksTable extends React.PureComponent<IExampleProps> {
     public state = {
         columns: [
             new TextSortableColumn("Id", 0),
@@ -79,40 +89,70 @@ class TableSortableExample extends React.PureComponent<IExampleProps> {
     };
 
     public render() {
+
         const numRows = this.state.data.length;
         const columns = this.state.columns.map(col => col.getColumn(this.getCellData, this.sortColumn));
+
         return (
-            <div className="bp3-dark">
-                <h1 className="bp3-heading">Books</h1>
-                <blockquote className="bp3-blockquote">
-                    The Java™ Programming Language is a general-purpose, concurrent,
-                    strongly typed, class-based object-oriented language.
-                    It is normally compiled to the bytecode instruction set and binary
-                    format defined in the Java Virtual Machine Specification.
-                    The Java™ Programming Language is a general-purpose, concurrent,
-                    strongly typed, class-based object-oriented language.
-                    It is normally compiled to the bytecode instruction set and binary
-                    format defined in the Java Virtual Machine Specification.
-                    The Java™ Programming Language is a general-purpose, concurrent,
-                    strongly typed, class-based object-oriented language.
-                    It is normally compiled to the bytecode instruction set and binary
-                    format defined in the Java Virtual Machine Specification.
-                </blockquote>
-                <Table2
-                    bodyContextMenuRenderer={this.renderBodyContextMenu}
-                    numRows={numRows}
-                    selectionModes={SelectionModes.COLUMNS_AND_CELLS}
-                >
-                    {columns}
-                </Table2>
-                <div className=".modifier">
-                    More than a decade ago, we set out to create products that would transform
-                    the way organizations use their data. Today, our products are deployed at
-                    the most critical government, commercial, and non-profit institutions in
-                    the world to solve problems we hadn’t even dreamed of back then.
-                </div>
+            <div className="App bp3-dark">
+
+                <h1 className="bp3-heading">Programming Books</h1>
+
+                <img src={logo} className="App-logo" alt="logo"/>
+
+                <header className="App-header-text">
+
+                    <div className=".modifier">
+                        Java is a high-level, class-based, object-oriented programming language that is designed to have
+                        as few implementation dependencies as possible. It is a general-purpose programming language
+                        intended to let programmers write once, run anywhere (WORA), meaning that compiled Java code
+                        can run on all platforms that support Java without the need for recompilation. Java
+                        applications are typically compiled to bytecode that can run on any Java virtual machine (JVM)
+                        regardless of the underlying computer architecture. The syntax of Java is similar to C and C++,
+                        but has fewer low-level facilities than either of them. The Java runtime provides dynamic
+                        capabilities (such as reflection and runtime code modification) that are typically not available
+                        in traditional compiled languages. As of 2019, Java was one of the most popular programming
+                        languages in use according to GitHub, particularly for client–server web applications,
+                        with a reported 9 million developers.
+                    </div>
+
+                </header>
+
+                <header className="App-header">
+
+                    <HotkeysProvider>
+
+                        <Table2
+                            enableColumnReordering={true}
+                            enableRowReordering={true}
+                            bodyContextMenuRenderer={this.renderBodyContextMenu}
+                            numRows={numRows}
+                            selectionModes={SelectionModes.COLUMNS_AND_CELLS}
+                        >
+                            {columns}
+                        </Table2>
+
+                    </HotkeysProvider>
+
+                    <div className={"App-buttons"}>
+
+                        <Icon icon="add-to-artifact" size={30} onClick={this.handleAddBook} htmlTitle={"Add book"}
+                              intent="primary"/>
+                    </div>
+
+                </header>
+
             </div>
         );
+    }
+
+    private handleAddBook = () => {
+
+        const {data} = this.state;
+
+        const newData = [...data, ...[["", "", "", "", "", "", ""]]]
+
+        this.setState({data: newData})
     }
 
     private getCellData = (rowIndex: number, columnIndex: number) => {
@@ -126,19 +166,17 @@ class TableSortableExample extends React.PureComponent<IExampleProps> {
     private renderBodyContextMenu = (context: IMenuContext) => {
         return (
             <Menu>
-                <CopyCellsMenuItem context={context} getCellData={this.getCellData} text="Copy" />
+                <CopyCellsMenuItem context={context} getCellData={this.getCellData} text="Copy"/>
             </Menu>
         );
     };
 
     private sortColumn = (columnIndex: number, comparator: (a: any, b: any) => number) => {
-        const { data } = this.state;
+        const {data} = this.state;
         const sortedIndexMap = Utils.times(data.length, (i: number) => i);
         sortedIndexMap.sort((a: number, b: number) => {
             return comparator(data[a][columnIndex], data[b][columnIndex]);
         });
-        this.setState({ sortedIndexMap });
+        this.setState({sortedIndexMap});
     };
 }
-
-export default TableSortableExample;

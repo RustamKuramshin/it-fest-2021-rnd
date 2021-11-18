@@ -1,0 +1,38 @@
+[
+  {
+    "id": 671238,
+    "title": "Java. Руководство для начинающих",
+    "author": "Герберт Шилдт",
+    "yearOfPublishing": "2018-01-01",
+    "genre": "Программирование",
+    "pages": 816,
+    "hasEpubVersion": true
+  },
+  {
+    "id": 695676,
+    "title": "Java. Библиотека профессионала. Том 1. Основы",
+    "author": "Кей Хорстманн",
+    "yearOfPublishing": "2019-01-01",
+    "genre": "Программирование",
+    "pages": 864,
+    "hasEpubVersion": false
+  },
+  {
+    "id": 464095,
+    "title": "Философия Java",
+    "author": "Брюс Эккель",
+    "yearOfPublishing": "2019-01-01",
+    "genre": "Программирование",
+    "pages": 1133,
+    "hasEpubVersion": true
+  },
+  {
+    "id": 464095,
+    "title": "Java Concurrency на практике",
+    "author": "Гетц",
+    "yearOfPublishing": "2020-01-01",
+    "genre": "Программирование",
+    "pages": 500,
+    "hasEpubVersion": true
+  }
+]

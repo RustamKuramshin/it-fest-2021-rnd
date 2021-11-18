@@ -1,11 +1,16 @@
+// Namespaces
 import React from 'react';
 import ReactDOM from 'react-dom';
+
+// CSS
 import './index.css';
-import TableSortableExample from './App';
 
-import 'normalize.css';
-import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-import '@blueprintjs/table/lib/css/table.css';
+// App Class
+import BooksTable from "./App";
 
-ReactDOM.render(<TableSortableExample id="table" />, document.getElementById('root'));
+ReactDOM.render(
+    <React.StrictMode>
+        <BooksTable id="books_table" />
+    </React.StrictMode>,
+    document.getElementById('root')
+);

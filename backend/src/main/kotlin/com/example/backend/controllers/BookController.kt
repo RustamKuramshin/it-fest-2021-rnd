@@ -1,13 +1,13 @@
 package com.example.backend.controllers
 
-import com.example.backend.dto.Book
+import com.example.backend.dto.BookDTO
 import com.example.backend.services.BookService
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/books")
 class BookController(
     private val bookService: BookService
 ) {
@@ -17,7 +17,7 @@ class BookController(
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseStatus(HttpStatus.OK)
-    fun getBooks(): List<Book> {
+    fun getBooks(): List<BookDTO> {
         return bookService.getBooks()
     }
 
@@ -27,8 +27,8 @@ class BookController(
         produces = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseStatus(HttpStatus.OK)
-    fun getBook(@PathVariable id: Long): List<Book> {
-        return bookService.getBooks()
+    fun getBook(@PathVariable id: Long): BookDTO {
+        return bookService.getBook(id)
     }
 
     @RequestMapping(
@@ -37,8 +37,8 @@ class BookController(
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseStatus(HttpStatus.CREATED)
-    fun createBook(book: Book): List<Book> {
-        return bookService.getBooks()
+    fun createBook(@RequestBody book: BookDTO): BookDTO {
+        return bookService.createBook(book)
     }
 
     @RequestMapping(
@@ -48,7 +48,7 @@ class BookController(
         consumes = [MediaType.APPLICATION_JSON_VALUE]
     )
     @ResponseStatus(HttpStatus.OK)
-    fun updateBook(@PathVariable id: Long, book: Book): Book {
+    fun updateBook(@PathVariable id: Long, @RequestBody book: BookDTO): BookDTO {
         return bookService.updateBook(id, book)
     }
 

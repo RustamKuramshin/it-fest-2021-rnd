@@ -1,11 +1,11 @@
 package com.example.backend.services
 
-import com.example.backend.dto.Book
+import com.example.backend.dto.BookDTO
 
 interface BookService {
-     fun getBooks(): List<Book>
-     fun getBook(id: Long): Book
-     fun createBook(book: Book): Book
-     fun updateBook(id: Long, book: Book): Book
+     fun getBooks(): List<BookDTO>
+     fun getBook(id: Long): BookDTO
+     fun createBook(book: BookDTO): BookDTO
+     fun updateBook(id: Long, book: BookDTO): BookDTO
      fun deleteBook(id: Long)
 }

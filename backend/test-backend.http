@@ -1,0 +1,53 @@
+# Чтение книги по id
+GET http://localhost:8080/books/2
+Accept: application/json
+
+###
+# Чтение всех книг
+GET http://localhost:8080/books
+Accept: application/json
+
+###
+# Создание книги 1
+POST http://localhost:8080/books
+Content-Type: application/json
+
+{
+  "title": "Дюна",
+  "author": "Фрэнк Герберт",
+  "yearOfPublishing": "1965-01-01",
+  "genre": "Научная фантастика",
+  "pages": 704,
+  "hasEpubVersion": true
+}
+
+###
+# Создание книги 2
+POST http://localhost:8080/books
+Content-Type: application/json
+
+{
+  "title": "Kotlin в действии",
+  "author": "Жемеров Д., Исакова С.",
+  "yearOfPublishing": "1965-01-01",
+  "genre": "Техническая литература",
+  "pages": 402,
+  "hasEpubVersion": true
+}
+###
+# Обновление книги по id
+PUT http://localhost:8080/books/2
+Content-Type: application/json
+
+{
+  "title": "Kotlin in action",
+  "author": "Жемеров Д., Исакова С.",
+  "yearOfPublishing": "1965-01-01",
+  "genre": "Техническая литература",
+  "pages": 402,
+  "hasEpubVersion": true
+}
+###
+# Удаление книги по id
+DELETE http://localhost:8080/books/1
+

@@ -1,6 +1,7 @@
 package com.example.backend.services
 
 import com.example.backend.dto.Book
+import com.example.backend.exceptions.BookNotFoundException
 import com.example.backend.repositories.BookRepository
 import org.springframework.stereotype.Service
 
@@ -10,23 +11,23 @@ class BookServiceImpl(
 ): BookService {
 
     override fun getBooks(): List<Book> {
-        TODO("Not yet implemented")
+        return bookRepository.findAll().toList()
     }
 
     override fun getBook(id: Long): Book {
-        TODO("Not yet implemented")
+        return bookRepository.findById(id).orElseThrow { throw BookNotFoundException() }
     }
 
-    override fun createBook(id: Long, book: Book): Book {
-        TODO("Not yet implemented")
+    override fun createBook(book: Book): Book {
+       return bookRepository.save(book)
     }
 
     override fun updateBook(id: Long, book: Book): Book {
-        TODO("Not yet implemented")
+        return bookRepository.save(book)
     }
 
     override fun deleteBook(id: Long) {
-        TODO("Not yet implemented")
+        bookRepository.deleteById(id)
     }
 
 }

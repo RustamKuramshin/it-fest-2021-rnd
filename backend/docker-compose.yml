@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: DockerfileServer
+      dockerfile: Dockerfile
     restart: always
     container_name: app_server
     ports:
@@ -19,6 +19,6 @@ services:
       - "5400:5432"
     restart: always
     environment:
-      - POSTGRES_DB=trucksdb
-      - POSTGRES_USER=trucksdb
-      - POSTGRES_PASSWORD=trucksdb
+      - POSTGRES_DB=booksbd
+      - POSTGRES_USER=booksbd
+      - POSTGRES_PASSWORD=booksbd

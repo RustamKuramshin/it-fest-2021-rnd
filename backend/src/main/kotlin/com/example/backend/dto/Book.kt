@@ -1,24 +1,25 @@
 package com.example.backend.dto
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Table
+import javax.persistence.*
 
-@Table
+@Entity
+@Table(name = "book")
 data class Book(
-        @Id
-        var id: Long? = null,
-        var name: String? = null,
-        var author: String? = null,
-        var numberOfPages : Int? = null,
-        var isElectronic : Boolean? = null
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    var id: Long? = null,
+    var name: String? = null,
+    var author: String? = null,
+    var numberOfPages: Int? = null,
+    var isElectronic: Boolean? = null
 ) {
 
     data class Builder(
-            var id: Long? = null,
-            var name: String? = null,
-            var author: String? = null,
-            var numberOfPages: Int? = null,
-            var isElectronic: Boolean? = null
+        var id: Long? = null,
+        var name: String? = null,
+        var author: String? = null,
+        var numberOfPages: Int? = null,
+        var isElectronic: Boolean? = null
     ) {
 
         fun text(id: Long?) = apply { this.id = id }
@@ -28,11 +29,11 @@ data class Book(
         fun isElectronic(isElectronic: Boolean?) = apply { this.isElectronic = isElectronic }
 
         fun build() = Book(
-                id,
-                name,
-                author,
-                numberOfPages,
-                isElectronic
+            id,
+            name,
+            author,
+            numberOfPages,
+            isElectronic
         )
     }
 }

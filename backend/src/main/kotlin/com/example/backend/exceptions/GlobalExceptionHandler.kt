@@ -13,12 +13,12 @@ class GlobalExceptionHandler(
 ) {
 
     @ExceptionHandler(Exception::class)
-    fun handleAnyException(e: Exception, rq: ServerHttpRequest): ResponseEntity<BookDTO> {
+    fun handleAnyException(e: Exception): ResponseEntity<BookDTO> {
         return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     @ExceptionHandler(BookNotFoundException::class)
-    fun handleBookNotFoundException(e: BookNotFoundException, rq: ServerHttpRequest): ResponseEntity<BookDTO> {
+    fun handleBookNotFoundException(e: BookNotFoundException): ResponseEntity<BookDTO> {
         return ResponseEntity(HttpStatus.NOT_FOUND)
     }
 }

@@ -20,7 +20,7 @@ class BookServiceImpl(
     }
 
     override fun getBook(id: Long): BookDTO {
-        val res = bookRepository.findById(id).orElseThrow { throw BookNotFoundException() }
+        val res = bookRepository.findById(id).orElseThrow { throw BookNotFoundException("Не найдена книга с id $id.") }
         return mapper.convertValue(res, BookDTO::class.java)
     }
 

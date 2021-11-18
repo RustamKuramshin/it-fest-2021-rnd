@@ -3,7 +3,6 @@ import * as React from "react";
 import logo from './logo.png';
 
 import {Menu, MenuItem} from "@blueprintjs/core";
-import {IExampleProps} from "@blueprintjs/docs-theme";
 import {HotkeysProvider} from "@blueprintjs/core";
 import {
     Column,
@@ -14,7 +13,7 @@ import {
     Table2,
     Utils,
 } from "@blueprintjs/table";
-import {Icon, IconSize} from "@blueprintjs/core";
+import {Icon} from "@blueprintjs/core";
 
 // CSS
 import 'normalize.css';
@@ -22,25 +21,38 @@ import '@blueprintjs/core/lib/css/blueprint.css';
 import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 import '@blueprintjs/table/lib/css/table.css';
 import './App.css';
+import {createBook, getAllBooks} from "./BooksApiClient";
+import {Book} from "./Book";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const books: any[] = require("./books.json");
+// const books: any[] = require("./books.json");
 
 type ICellLookup = (rowIndex: number, columnIndex: number) => any;
 type ISortCallback = (columnIndex: number, comparator: (a: any, b: any) => number) => void;
 
 interface ISortableColumn {
-    getColumn(getCellData: ICellLookup, sortColumn: ISortCallback): JSX.Element;
+    getColumn(getCellData: ICellLookup, sortColumn: ISortCallback, books: Book[]): JSX.Element;
+}
+
+const handleCellConfirm = (rowIndex: number, columnIndex: number, books: Book[]) => {
+    return () => {
+        createBook(books[rowIndex]).then(b => console.log("Book created"))
+    }
 }
 
 abstract class AbstractSortableColumn implements ISortableColumn {
     constructor(protected name: string, protected index: number) {
     }
 
-    public getColumn(getCellData: ICellLookup, sortColumn: ISortCallback) {
-        const cellRenderer = (rowIndex: number, columnIndex: number) => (
-            <EditableCell2 value={getCellData(rowIndex, columnIndex)}/>
-        );
+    public getColumn(getCellData: ICellLookup, sortColumn: ISortCallback, books: Book[]) {
+        const cellRenderer = (rowIndex: number, columnIndex: number) => {
+            const cellVal = getCellData(rowIndex, columnIndex);
+            let val = cellVal;
+            if (typeof cellVal !== "undefined") {
+                val = `${cellVal}`
+            }
+            return (<EditableCell2 value={val} onConfirm={handleCellConfirm(rowIndex, columnIndex, books)}/>)
+        };
         const menuRenderer = this.renderMenu.bind(this, sortColumn);
         const columnHeaderCellRenderer = () => <ColumnHeaderCell name={this.name} menuRenderer={menuRenderer}/>;
         return (
@@ -73,7 +85,7 @@ class TextSortableColumn extends AbstractSortableColumn {
     }
 }
 
-export default class BooksTable extends React.PureComponent<IExampleProps> {
+export default class BooksTable extends React.PureComponent {
     public state = {
         columns: [
             new TextSortableColumn("Id", 0),
@@ -84,14 +96,20 @@ export default class BooksTable extends React.PureComponent<IExampleProps> {
             new TextSortableColumn("Pages", 0),
             new TextSortableColumn("Has epub version", 0)
         ] as ISortableColumn[],
-        data: books,
+        data: [],
         sortedIndexMap: [] as number[],
     };
+
+    componentDidMount() {
+        getAllBooks().then(books => {
+            this.setState({data: books})
+        })
+    }
 
     public render() {
 
         const numRows = this.state.data.length;
-        const columns = this.state.columns.map(col => col.getColumn(this.getCellData, this.sortColumn));
+        const columns = this.state.columns.map(col => col.getColumn(this.getCellData, this.sortColumn, this.state.data));
 
         return (
             <div className="App bp3-dark">
@@ -156,11 +174,21 @@ export default class BooksTable extends React.PureComponent<IExampleProps> {
     }
 
     private getCellData = (rowIndex: number, columnIndex: number) => {
+        const fieldsMap = new Map();
+        fieldsMap.set(0, "id");
+        fieldsMap.set(1, "title");
+        fieldsMap.set(2, "author");
+        fieldsMap.set(3, "yearOfPublishing");
+        fieldsMap.set(4, "genre");
+        fieldsMap.set(5, "pages");
+        fieldsMap.set(6, "hasEpubVersion");
+
         const sortedRowIndex = this.state.sortedIndexMap[rowIndex];
         if (sortedRowIndex != null) {
             rowIndex = sortedRowIndex;
         }
-        return this.state.data[rowIndex][columnIndex];
+
+        return this.state.data[rowIndex][fieldsMap.get(columnIndex)];
     };
 
     private renderBodyContextMenu = (context: IMenuContext) => {

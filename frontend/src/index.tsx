@@ -9,8 +9,6 @@ import './index.css';
 import BooksTable from "./App";
 
 ReactDOM.render(
-    <React.StrictMode>
-        <BooksTable id="books_table" />
-    </React.StrictMode>,
+    <BooksTable />,
     document.getElementById('root')
 );

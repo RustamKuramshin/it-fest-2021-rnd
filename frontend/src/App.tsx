@@ -4,17 +4,17 @@ import logo from './logo.png';
 
 import {Menu, MenuItem} from "@blueprintjs/core";
 import {IExampleProps} from "@blueprintjs/docs-theme";
+import {HotkeysProvider} from "@blueprintjs/core";
 import {
-    Cell,
     Column,
     ColumnHeaderCell,
-    CopyCellsMenuItem,
+    CopyCellsMenuItem, EditableCell2,
     IMenuContext,
     SelectionModes,
     Table2,
     Utils,
 } from "@blueprintjs/table";
-import { Icon, IconSize } from "@blueprintjs/core";
+import {Icon, IconSize} from "@blueprintjs/core";
 
 // CSS
 import 'normalize.css';
@@ -39,7 +39,7 @@ abstract class AbstractSortableColumn implements ISortableColumn {
 
     public getColumn(getCellData: ICellLookup, sortColumn: ISortCallback) {
         const cellRenderer = (rowIndex: number, columnIndex: number) => (
-            <Cell>{getCellData(rowIndex, columnIndex)}</Cell>
+            <EditableCell2 value={getCellData(rowIndex, columnIndex)}/>
         );
         const menuRenderer = this.renderMenu.bind(this, sortColumn);
         const columnHeaderCellRenderer = () => <ColumnHeaderCell name={this.name} menuRenderer={menuRenderer}/>;
@@ -98,7 +98,7 @@ export default class BooksTable extends React.PureComponent<IExampleProps> {
 
                 <h1 className="bp3-heading">Programming Books</h1>
 
-                <img src={logo} className="App-logo" alt="logo" />
+                <img src={logo} className="App-logo" alt="logo"/>
 
                 <header className="App-header-text">
 
@@ -120,16 +120,24 @@ export default class BooksTable extends React.PureComponent<IExampleProps> {
 
                 <header className="App-header">
 
-                    <Table2
-                        bodyContextMenuRenderer={this.renderBodyContextMenu}
-                        numRows={numRows}
-                        selectionModes={SelectionModes.COLUMNS_AND_CELLS}
-                    >
-                        {columns}
-                    </Table2>
+                    <HotkeysProvider>
+
+                        <Table2
+                            enableColumnReordering={true}
+                            enableRowReordering={true}
+                            bodyContextMenuRenderer={this.renderBodyContextMenu}
+                            numRows={numRows}
+                            selectionModes={SelectionModes.COLUMNS_AND_CELLS}
+                        >
+                            {columns}
+                        </Table2>
+
+                    </HotkeysProvider>
 
                     <div className={"App-buttons"}>
-                        <Icon icon="add-to-artifact" size={30} onClick={this.handleAddBook} htmlTitle={"Add book"} intent="primary"/>
+
+                        <Icon icon="add-to-artifact" size={30} onClick={this.handleAddBook} htmlTitle={"Add book"}
+                              intent="primary"/>
                     </div>
 
                 </header>
@@ -142,9 +150,9 @@ export default class BooksTable extends React.PureComponent<IExampleProps> {
 
         const {data} = this.state;
 
-        const newData = [...data, ...[["","","","","","",""]]]
+        const newData = [...data, ...[["", "", "", "", "", "", ""]]]
 
-        this.setState({ data: newData })
+        this.setState({data: newData})
     }
 
     private getCellData = (rowIndex: number, columnIndex: number) => {

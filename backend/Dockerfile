@@ -1,15 +1,16 @@
-FROM openjdk:8-jdk-alpine
+FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim as build
 WORKDIR /workspace/app
 
-COPY .gradle .gradle/
-COPY gradle gradle/
-COPY src src/
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+COPY src src
 
-COPY gradlew .
-COPY build.gradle.kts .
-COPY settings.gradle.kts .
+CMD ./mvnw clean package
+CMD cp ./target/backend-0.0.1-SNAPSHOT.jar ./backend-0.0.1-SNAPSHOT.jar
 
-RUN chmod +x ./gradlew
-RUN ./gradlew assemble -i
-RUN cp ./build/libs/*.jar ./app.jar
-ENTRYPOINT ["java","-jar","app.jar"]
+
+FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim
+WORKDIR /workspace/app
+COPY --from=build /workspace/app/backend-0.0.1-SNAPSHOT.jar ./backend-0.0.1-SNAPSHOT.jar
+ENTRYPOINT ["java","-jar","backend-0.0.1-SNAPSHOT.jar.jar"]

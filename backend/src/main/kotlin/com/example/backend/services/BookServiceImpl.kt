@@ -25,16 +25,19 @@ class BookServiceImpl(
     override fun createBook(book: BookDTO): BookDTO {
         val res = try {
             bookRepository.save(mapper.toEntity(book))
-        }catch (e: RuntimeException){
+        } catch (e: RuntimeException) {
             throw BookCreateException("Не удалось сохранить книгу $book.")
         }
         return mapper.toDTO(res)
     }
 
     override fun updateBook(id: Long, book: BookDTO): BookDTO {
-        getBook(id)
-        val res = bookRepository.save(mapper.toEntity(book.copy(id = id)))
-        return mapper.toDTO(res)
+        val bookForSaving = if (bookRepository.findById(id).isEmpty)
+            book
+        else
+            book.copy(id = id)
+
+        return mapper.toDTO(bookRepository.save(mapper.toEntity(bookForSaving)))
     }
 
     override fun deleteBook(id: Long) {

@@ -1,19 +1,17 @@
 /* eslint-disable max-classes-per-file */
 import * as React from "react"
-import logo from './logo.png'
 
-import {Menu, MenuItem} from "@blueprintjs/core"
-import {HotkeysProvider} from "@blueprintjs/core"
+import {HotkeysProvider, Icon, Menu, MenuItem} from "@blueprintjs/core"
 import {
     Column,
     ColumnHeaderCell,
-    CopyCellsMenuItem, EditableCell2,
+    CopyCellsMenuItem,
+    EditableCell2,
     IMenuContext,
     SelectionModes,
     Table2,
     Utils,
 } from "@blueprintjs/table"
-import {Icon} from "@blueprintjs/core"
 
 // CSS
 import 'normalize.css'
@@ -49,6 +47,16 @@ const getEmptyBook = (): Book => {
     } as Book
 }
 
+const isEmptyField = (value: any) => {
+    let res
+    res = !value;
+    return res
+}
+
+const compare = (a: any, b: any)  => {
+    return a.toString().localeCompare(b)
+}
+
 export default class BooksTable extends React.PureComponent {
 
     public state = {
@@ -75,7 +83,7 @@ export default class BooksTable extends React.PureComponent {
 
                 <h1 className="bp3-heading">Programming Books</h1>
 
-                <img src={logo} className="App-logo" alt="logo"/>
+                {/*<img src={logo} className="App-logo" alt="logo"/>*/}
 
                 <header className="App-header-text">
 
@@ -129,6 +137,10 @@ export default class BooksTable extends React.PureComponent {
         this.setState({data: newData})
     }
 
+    private handleDeleteBook = () => {
+        console.log("DELETE ROW")
+    }
+
     private getCellData = (rowIndex: number, columnIndex: number) => {
         const tableFieldsMap = getTableFieldsMap()
         const sortedRowIndex = this.state.sortedIndexMap[rowIndex]
@@ -147,6 +159,14 @@ export default class BooksTable extends React.PureComponent {
 
             const {data} = this.state
             const newData = [...data]
+
+            let isEmptyFlag = false
+
+            if (isEmptyField(value)) {
+                console.log("Field is EMPTY")
+                isEmptyFlag = true
+                value = undefined
+            }
 
             switch (columnIndex) {
                 case 0:
@@ -172,17 +192,22 @@ export default class BooksTable extends React.PureComponent {
                     break
             }
 
-            createBook(newData[rowIndex]).then((book: Book) => {
-                newData[rowIndex] = book
+            if (isEmptyFlag) {
                 this.setState({data: newData})
-            })
+            } else {
+                createBook(newData[rowIndex]).then((book: Book) => {
+                    newData[rowIndex] = book
+                    this.setState({data: newData})
+                })
+            }
         }
     }
 
     private renderBodyContextMenu = (context: IMenuContext) => {
         return (
             <Menu>
-                <CopyCellsMenuItem context={context} getCellData={this.getCellData} text="Copy"/>
+                <CopyCellsMenuItem context={context} getCellData={this.getCellData} text="Copy" />
+                <MenuItem text={"Delete row"} onClick={this.handleDeleteBook} />
             </Menu>
         )
     }
@@ -224,8 +249,8 @@ export default class BooksTable extends React.PureComponent {
     }
 
     private renderMenu() {
-        const sortAsc = () => this.sortColumn(0, (a, b) => this.compare(a, b))
-        const sortDesc = () => this.sortColumn(0, (a, b) => this.compare(b, a))
+        const sortAsc = () => this.sortColumn(0, (a, b) => compare(a, b))
+        const sortDesc = () => this.sortColumn(0, (a, b) => compare(b, a))
 
         return (
             <Menu>
@@ -233,9 +258,5 @@ export default class BooksTable extends React.PureComponent {
                 <MenuItem icon="sort-desc" onClick={sortDesc} text="Sort Desc"/>
             </Menu>
         )
-    }
-
-    private compare(a: any, b: any) {
-        return a.toString().localeCompare(b)
     }
 }

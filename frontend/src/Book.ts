@@ -1,9 +1,9 @@
 export interface Book {
-    id: number,
+    id: number | undefined,
     title: string,
     author: string,
-    yearOfPublishing: Date,
+    yearOfPublishing: Date | undefined,
     genre: string,
-    pages: number,
-    hasEpubVersion: boolean
+    pages: number | undefined,
+    hasEpubVersion: boolean | undefined
 }

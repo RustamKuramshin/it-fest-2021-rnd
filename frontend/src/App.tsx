@@ -1,9 +1,9 @@
 /* eslint-disable max-classes-per-file */
-import * as React from "react";
-import logo from './logo.png';
+import * as React from "react"
+import logo from './logo.png'
 
-import {Menu, MenuItem} from "@blueprintjs/core";
-import {HotkeysProvider} from "@blueprintjs/core";
+import {Menu, MenuItem} from "@blueprintjs/core"
+import {HotkeysProvider} from "@blueprintjs/core"
 import {
     Column,
     ColumnHeaderCell,
@@ -12,32 +12,52 @@ import {
     SelectionModes,
     Table2,
     Utils,
-} from "@blueprintjs/table";
-import {Icon} from "@blueprintjs/core";
+} from "@blueprintjs/table"
+import {Icon} from "@blueprintjs/core"
 
 // CSS
-import 'normalize.css';
-import '@blueprintjs/core/lib/css/blueprint.css';
-import '@blueprintjs/icons/lib/css/blueprint-icons.css';
-import '@blueprintjs/table/lib/css/table.css';
-import './App.css';
-import {createBook, getAllBooks} from "./BooksApiClient";
-import {Book} from "./Book";
+import 'normalize.css'
+import '@blueprintjs/core/lib/css/blueprint.css'
+import '@blueprintjs/icons/lib/css/blueprint-icons.css'
+import '@blueprintjs/table/lib/css/table.css'
+import './App.css'
+import {createBook, getAllBooks} from "./BooksApiClient"
+import {Book} from "./Book"
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-// const books: any[] = require("./books.json");
-
-type ICellLookup = (rowIndex: number, columnIndex: number) => any;
-type ISortCallback = (columnIndex: number, comparator: (a: any, b: any) => number) => void;
+type ICellLookup = (rowIndex: number, columnIndex: number) => any
+type ISortCallback = (columnIndex: number, comparator: (a: any, b: any) => number) => void
 
 interface ISortableColumn {
-    getColumn(getCellData: ICellLookup, sortColumn: ISortCallback, books: Book[]): JSX.Element;
+    getColumn(getCellData: ICellLookup, sortColumn: ISortCallback, books: Book[]): JSX.Element
 }
 
-const handleCellConfirm = (rowIndex: number, columnIndex: number, books: Book[]) => {
-    return () => {
-        createBook(books[rowIndex]).then(b => console.log("Book created"))
-    }
+const getTableFieldsMap = (): Map<number, string> => {
+    const tableFieldsMap = new Map()
+    tableFieldsMap.set(0, "id")
+    tableFieldsMap.set(1, "title")
+    tableFieldsMap.set(2, "author")
+    tableFieldsMap.set(3, "yearOfPublishing")
+    tableFieldsMap.set(4, "genre")
+    tableFieldsMap.set(5, "pages")
+    tableFieldsMap.set(6, "hasEpubVersion")
+
+    return tableFieldsMap
+}
+
+const getEmptyBook = (): Book => {
+    return {
+        id: undefined,
+        title: "",
+        author: "",
+        yearOfPublishing: undefined,
+        genre: "",
+        pages: undefined,
+        hasEpubVersion: undefined
+    } as Book
+}
+
+const cellSetter = () => {
+
 }
 
 abstract class AbstractSortableColumn implements ISortableColumn {
@@ -46,15 +66,15 @@ abstract class AbstractSortableColumn implements ISortableColumn {
 
     public getColumn(getCellData: ICellLookup, sortColumn: ISortCallback, books: Book[]) {
         const cellRenderer = (rowIndex: number, columnIndex: number) => {
-            const cellVal = getCellData(rowIndex, columnIndex);
-            let val = cellVal;
+            const cellVal = getCellData(rowIndex, columnIndex)
+            let val = cellVal
             if (typeof cellVal !== "undefined") {
                 val = `${cellVal}`
             }
-            return (<EditableCell2 value={val} onConfirm={handleCellConfirm(rowIndex, columnIndex, books)}/>)
-        };
-        const menuRenderer = this.renderMenu.bind(this, sortColumn);
-        const columnHeaderCellRenderer = () => <ColumnHeaderCell name={this.name} menuRenderer={menuRenderer}/>;
+            return (<EditableCell2 value={val} />)
+        }
+        const menuRenderer = this.renderMenu.bind(this, sortColumn)
+        const columnHeaderCellRenderer = () => <ColumnHeaderCell name={this.name} menuRenderer={menuRenderer}/>
         return (
             <Column
                 cellRenderer={cellRenderer}
@@ -62,26 +82,28 @@ abstract class AbstractSortableColumn implements ISortableColumn {
                 key={this.index}
                 name={this.name}
             />
-        );
+        )
     }
 
-    protected abstract renderMenu(sortColumn: ISortCallback): JSX.Element;
+    protected abstract renderMenu(sortColumn: ISortCallback): JSX.Element
 }
 
 class TextSortableColumn extends AbstractSortableColumn {
+
     protected renderMenu(sortColumn: ISortCallback) {
-        const sortAsc = () => sortColumn(this.index, (a, b) => this.compare(a, b));
-        const sortDesc = () => sortColumn(this.index, (a, b) => this.compare(b, a));
+        const sortAsc = () => sortColumn(this.index, (a, b) => this.compare(a, b))
+        const sortDesc = () => sortColumn(this.index, (a, b) => this.compare(b, a))
+
         return (
             <Menu>
                 <MenuItem icon="sort-asc" onClick={sortAsc} text="Sort Asc"/>
                 <MenuItem icon="sort-desc" onClick={sortDesc} text="Sort Desc"/>
             </Menu>
-        );
+        )
     }
 
     private compare(a: any, b: any) {
-        return a.toString().localeCompare(b);
+        return a.toString().localeCompare(b)
     }
 }
 
@@ -96,9 +118,9 @@ export default class BooksTable extends React.PureComponent {
             new TextSortableColumn("Pages", 0),
             new TextSortableColumn("Has epub version", 0)
         ] as ISortableColumn[],
-        data: [],
+        data: [] as Book[],
         sortedIndexMap: [] as number[],
-    };
+    }
 
     componentDidMount() {
         getAllBooks().then(books => {
@@ -108,8 +130,10 @@ export default class BooksTable extends React.PureComponent {
 
     public render() {
 
-        const numRows = this.state.data.length;
-        const columns = this.state.columns.map(col => col.getColumn(this.getCellData, this.sortColumn, this.state.data));
+        console.log(`Render: books=${JSON.stringify(this.state.data)}`)
+
+        const numRows = this.state.data.length
+        const columns = this.state.columns.map(col => col.getColumn(this.getCellData, this.sortColumn, this.state.data))
 
         return (
             <div className="App bp3-dark">
@@ -161,50 +185,47 @@ export default class BooksTable extends React.PureComponent {
                 </header>
 
             </div>
-        );
+        )
     }
 
     private handleAddBook = () => {
-
-        const {data} = this.state;
-
-        const newData = [...data, ...[["", "", "", "", "", "", ""]]]
-
+        const {data} = this.state
+        const newData = [...data, ...[getEmptyBook()]]
         this.setState({data: newData})
     }
 
     private getCellData = (rowIndex: number, columnIndex: number) => {
-        const fieldsMap = new Map();
-        fieldsMap.set(0, "id");
-        fieldsMap.set(1, "title");
-        fieldsMap.set(2, "author");
-        fieldsMap.set(3, "yearOfPublishing");
-        fieldsMap.set(4, "genre");
-        fieldsMap.set(5, "pages");
-        fieldsMap.set(6, "hasEpubVersion");
-
-        const sortedRowIndex = this.state.sortedIndexMap[rowIndex];
+        const tableFieldsMap = getTableFieldsMap()
+        const sortedRowIndex = this.state.sortedIndexMap[rowIndex]
         if (sortedRowIndex != null) {
-            rowIndex = sortedRowIndex;
+            rowIndex = sortedRowIndex
         }
 
-        return this.state.data[rowIndex][fieldsMap.get(columnIndex)];
-    };
+        let bookAsMap = new Map(Object.entries(this.state.data[rowIndex]))
+
+        return bookAsMap.get(tableFieldsMap.get(columnIndex) as string)
+    }
 
     private renderBodyContextMenu = (context: IMenuContext) => {
         return (
             <Menu>
                 <CopyCellsMenuItem context={context} getCellData={this.getCellData} text="Copy"/>
             </Menu>
-        );
-    };
+        )
+    }
 
     private sortColumn = (columnIndex: number, comparator: (a: any, b: any) => number) => {
-        const {data} = this.state;
-        const sortedIndexMap = Utils.times(data.length, (i: number) => i);
+        const {data} = this.state
+        const sortedIndexMap = Utils.times(data.length, (i: number) => i)
         sortedIndexMap.sort((a: number, b: number) => {
-            return comparator(data[a][columnIndex], data[b][columnIndex]);
-        });
-        this.setState({sortedIndexMap});
-    };
+            const tableFieldsMap = getTableFieldsMap()
+
+            let bookAsMapA = new Map(Object.entries(data[a]))
+            let bookAsMapB = new Map(Object.entries(data[b]))
+
+            return comparator(bookAsMapA.get(tableFieldsMap.get(columnIndex) as string),
+                bookAsMapB.get(tableFieldsMap.get(columnIndex) as string))
+        })
+        this.setState({sortedIndexMap})
+    }
 }

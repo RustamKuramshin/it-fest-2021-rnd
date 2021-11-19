@@ -56,7 +56,7 @@ class BookController(
         method = [RequestMethod.DELETE],
         value = ["/{id}"]
     )
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.OK)
     fun deleteBook(@PathVariable id: Long) {
         bookService.deleteBook(id)
     }

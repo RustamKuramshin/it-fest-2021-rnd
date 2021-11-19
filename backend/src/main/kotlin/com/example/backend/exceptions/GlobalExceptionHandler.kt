@@ -3,13 +3,13 @@ package com.example.backend.exceptions
 import com.example.backend.dto.BookDTO
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
 
 @RestControllerAdvice
-class GlobalExceptionHandler(
+class GlobalExceptionHandler : ResponseEntityExceptionHandler(
 ) {
 
     @ExceptionHandler(Exception::class)
@@ -17,8 +17,8 @@ class GlobalExceptionHandler(
         return ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
-    @ExceptionHandler(BookNotFoundException::class)
-    fun handleBookNotFoundException(e: BookNotFoundException): ResponseEntity<BookDTO> {
-        return ResponseEntity(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BookNotFoundException::class, BookCreateException::class)
+    fun handleBookNotFoundException(e: RuntimeException): ResponseEntity<String> {
+        return ResponseEntity(e.message, HttpStatus.NOT_FOUND)
     }
 }

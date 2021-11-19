@@ -1,39 +1,40 @@
 package com.example.backend.services
 
 import com.example.backend.dto.BookDTO
-import com.example.backend.entities.Book
+import com.example.backend.exceptions.BookCreateException
 import com.example.backend.exceptions.BookNotFoundException
+import com.example.backend.mappers.BookMapper
 import com.example.backend.repositories.BookRepository
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 
 @Service
 class BookServiceImpl(
     private val bookRepository: BookRepository,
-    private val mapper: ObjectMapper
+    private val mapper: BookMapper
 ) : BookService {
 
     override fun getBooks(): List<BookDTO> {
-        val res = mutableListOf<BookDTO>()
-        bookRepository.findAll().forEach{ res.add(mapper.convertValue(it, BookDTO::class.java))}
-        return res
+        return bookRepository.findAll().map(mapper::toDTO)
     }
 
     override fun getBook(id: Long): BookDTO {
-        val res = bookRepository.findById(id).orElseThrow { throw BookNotFoundException("Не найдена книга с id $id.") }
-        return mapper.convertValue(res, BookDTO::class.java)
+        return mapper.toDTO(bookRepository.findById(id)
+            .orElseThrow { throw BookNotFoundException("Не найдена книга с id $id.") })
     }
 
     override fun createBook(book: BookDTO): BookDTO {
-        val entity = mapper.convertValue(book, Book::class.java)
-        val res = bookRepository.save(entity)
-        return mapper.convertValue(res, BookDTO::class.java)
+        val res = try {
+            bookRepository.save(mapper.toEntity(book))
+        }catch (e: RuntimeException){
+            throw BookCreateException("Не удалось сохранить книгу $book.")
+        }
+        return mapper.toDTO(res)
     }
 
     override fun updateBook(id: Long, book: BookDTO): BookDTO {
-        val entity = mapper.convertValue(book.copy(id = id), Book::class.java)
-        val res = bookRepository.save(entity)
-        return mapper.convertValue(res, BookDTO::class.java)
+        getBook(id)
+        val res = bookRepository.save(mapper.toEntity(book.copy(id = id)))
+        return mapper.toDTO(res)
     }
 
     override fun deleteBook(id: Long) {

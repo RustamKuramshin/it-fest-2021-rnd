@@ -1,3 +1,3 @@
 package com.example.backend.exceptions
 
-class BookNotFoundException(val msg: String? = null) : RuntimeException()
+class BookNotFoundException(msg: String? = null) : RuntimeException(msg)

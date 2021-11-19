@@ -24,13 +24,6 @@ import './App.css'
 import {createBook, getAllBooks} from "./BooksApiClient"
 import {Book} from "./Book"
 
-type ICellLookup = (rowIndex: number, columnIndex: number) => any
-type ISortCallback = (columnIndex: number, comparator: (a: any, b: any) => number) => void
-
-interface ISortableColumn {
-    getColumn(getCellData: ICellLookup, sortColumn: ISortCallback, books: Book[]): JSX.Element
-}
-
 const getTableFieldsMap = (): Map<number, string> => {
     const tableFieldsMap = new Map()
     tableFieldsMap.set(0, "id")
@@ -56,74 +49,16 @@ const getEmptyBook = (): Book => {
     } as Book
 }
 
-const cellSetter = () => {
-
-}
-
-abstract class AbstractSortableColumn implements ISortableColumn {
-    constructor(protected name: string, protected index: number) {
-    }
-
-    public getColumn(getCellData: ICellLookup, sortColumn: ISortCallback, books: Book[]) {
-        const cellRenderer = (rowIndex: number, columnIndex: number) => {
-            const cellVal = getCellData(rowIndex, columnIndex)
-            let val = cellVal
-            if (typeof cellVal !== "undefined") {
-                val = `${cellVal}`
-            }
-            return (<EditableCell2 value={val} />)
-        }
-        const menuRenderer = this.renderMenu.bind(this, sortColumn)
-        const columnHeaderCellRenderer = () => <ColumnHeaderCell name={this.name} menuRenderer={menuRenderer}/>
-        return (
-            <Column
-                cellRenderer={cellRenderer}
-                columnHeaderCellRenderer={columnHeaderCellRenderer}
-                key={this.index}
-                name={this.name}
-            />
-        )
-    }
-
-    protected abstract renderMenu(sortColumn: ISortCallback): JSX.Element
-}
-
-class TextSortableColumn extends AbstractSortableColumn {
-
-    protected renderMenu(sortColumn: ISortCallback) {
-        const sortAsc = () => sortColumn(this.index, (a, b) => this.compare(a, b))
-        const sortDesc = () => sortColumn(this.index, (a, b) => this.compare(b, a))
-
-        return (
-            <Menu>
-                <MenuItem icon="sort-asc" onClick={sortAsc} text="Sort Asc"/>
-                <MenuItem icon="sort-desc" onClick={sortDesc} text="Sort Desc"/>
-            </Menu>
-        )
-    }
-
-    private compare(a: any, b: any) {
-        return a.toString().localeCompare(b)
-    }
-}
-
 export default class BooksTable extends React.PureComponent {
+
     public state = {
-        columns: [
-            new TextSortableColumn("Id", 0),
-            new TextSortableColumn("Title", 0),
-            new TextSortableColumn("Author", 0),
-            new TextSortableColumn("Year of publishing", 0),
-            new TextSortableColumn("Genre", 0),
-            new TextSortableColumn("Pages", 0),
-            new TextSortableColumn("Has epub version", 0)
-        ] as ISortableColumn[],
+        columns: ["Id", "Title", "Author", "Year of publishing", "Genre", "Pages", "Has epub version"],
         data: [] as Book[],
         sortedIndexMap: [] as number[],
     }
 
     componentDidMount() {
-        getAllBooks().then(books => {
+        getAllBooks().then((books: Book[]) => {
             this.setState({data: books})
         })
     }
@@ -133,7 +68,7 @@ export default class BooksTable extends React.PureComponent {
         console.log(`Render: books=${JSON.stringify(this.state.data)}`)
 
         const numRows = this.state.data.length
-        const columns = this.state.columns.map(col => col.getColumn(this.getCellData, this.sortColumn, this.state.data))
+        const columns = this.state.columns.map(col => this.getColumn(col))
 
         return (
             <div className="App bp3-dark">
@@ -206,6 +141,44 @@ export default class BooksTable extends React.PureComponent {
         return bookAsMap.get(tableFieldsMap.get(columnIndex) as string)
     }
 
+    private cellSetter = (rowIndex: number, columnIndex: number) => {
+        return (value: any) => {
+            console.log(`cellSetter: value=${JSON.stringify(value)}, columnIndex=${columnIndex}`)
+
+            const {data} = this.state
+            const newData = [...data]
+
+            switch (columnIndex) {
+                case 0:
+                    newData[rowIndex].id = value
+                    break
+                case 1:
+                    newData[rowIndex].title = value
+                    break
+                case 2:
+                    newData[rowIndex].author = value
+                    break
+                case 3:
+                    newData[rowIndex].yearOfPublishing = value
+                    break
+                case 4:
+                    newData[rowIndex].genre = value
+                    break
+                case 5:
+                    newData[rowIndex].pages = value
+                    break
+                case 6:
+                    newData[rowIndex].hasEpubVersion = value
+                    break
+            }
+
+            createBook(newData[rowIndex]).then((book: Book) => {
+                newData[rowIndex] = book
+                this.setState({data: newData})
+            })
+        }
+    }
+
     private renderBodyContextMenu = (context: IMenuContext) => {
         return (
             <Menu>
@@ -227,5 +200,42 @@ export default class BooksTable extends React.PureComponent {
                 bookAsMapB.get(tableFieldsMap.get(columnIndex) as string))
         })
         this.setState({sortedIndexMap})
+    }
+
+    private getColumn(column: string) {
+        const cellRenderer = (rowIndex: number, columnIndex: number) => {
+            const cellVal = this.getCellData(rowIndex, columnIndex)
+            let val = cellVal
+            if (typeof cellVal !== "undefined") {
+                val = `${cellVal}`
+            }
+            return (<EditableCell2 value={val} onConfirm={this.cellSetter(rowIndex, columnIndex)} />)
+        }
+        const menuRenderer = this.renderMenu.bind(this, this.sortColumn)
+        const columnHeaderCellRenderer = () => <ColumnHeaderCell name={column} menuRenderer={menuRenderer}/>
+        return (
+            <Column
+                cellRenderer={cellRenderer}
+                columnHeaderCellRenderer={columnHeaderCellRenderer}
+                key={0}
+                name={column}
+            />
+        )
+    }
+
+    private renderMenu() {
+        const sortAsc = () => this.sortColumn(0, (a, b) => this.compare(a, b))
+        const sortDesc = () => this.sortColumn(0, (a, b) => this.compare(b, a))
+
+        return (
+            <Menu>
+                <MenuItem icon="sort-asc" onClick={sortAsc} text="Sort Asc"/>
+                <MenuItem icon="sort-desc" onClick={sortDesc} text="Sort Desc"/>
+            </Menu>
+        )
+    }
+
+    private compare(a: any, b: any) {
+        return a.toString().localeCompare(b)
     }
 }

@@ -1,14 +1,11 @@
 // Namespaces
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 // CSS
-import './index.css';
+import './index.css'
 
 // App Class
-import BooksTable from "./App";
+import BooksTable from "./App"
 
-ReactDOM.render(
-    <BooksTable />,
-    document.getElementById('root')
-);
+ReactDOM.render(<BooksTable />, document.getElementById('root'))

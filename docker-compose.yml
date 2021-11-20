@@ -1,35 +1,35 @@
 version: '3'
 
 services:
-  books_frontend:
+  books-frontend:
     build:
       context: frontend
       dockerfile: DockerfileFrontend
     restart: always
-    container_name: books_frontend
+    container_name: books-frontend
     ports:
-      - "8085:80"
+      - "8090:80"
     tty: true
     depends_on:
-      - backend
-  books_backend:
+      - books-backend
+  books-backend:
     build:
       context: backend
       dockerfile: DockerfileServer
     restart: always
-    entrypoint:
-      - DB_HOST=books_db
+    environment:
+      - DB_HOST=books-db
       - DB_PORT=5432
       - DB_NAME=booksdb
       - DB_USER=booksdb
       - DB_PASSWORD=booksdb
-    container_name: books_backend
+    container_name: books-backend
     tty: true
     depends_on:
-      - db
-  books_db:
+      - books-db
+  books-db:
     image: postgres:10.3-alpine
-    container_name: books_db
+    container_name: books-db
     ports:
       - "25432:5432"
     restart: always

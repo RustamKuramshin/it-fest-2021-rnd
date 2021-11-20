@@ -1,19 +1,19 @@
-import {Book} from "./Book";
+import {Book} from "./Book"
 
 export const enum HttpRequest {
     GET= "GET", POST = "POST", PUT = "PUT", DELETE = "DELETE"
 }
 
-const baseUrl = `${window.location.protocol}://${window.location.host}/api/books`
+const baseUrl = `${window.location.protocol}//${window.location.host}/api/books`
 
-const getRandomInt = () => Math.floor(Math.random() * (1000 - 1 + 1)) + 1;
+const getRandomInt = () => Math.floor(Math.random() * (1000 - 1 + 1)) + 1
 
 async function tryFetch(method: HttpRequest, url: string, body?: any) {
 
-    const json = JSON.stringify(body);
-    const rqId = getRandomInt();
+    const json = JSON.stringify(body)
+    const rqId = getRandomInt()
 
-    console.log(`rqId=${rqId} - Begin HTTP request: method=${method}, url=${url}, body=${json}`);
+    console.log(`rqId=${rqId} - Begin HTTP request: method=${method}, url=${url}, body=${json}`)
 
     const headers = {
         'Accept': '*/*'
@@ -27,13 +27,13 @@ async function tryFetch(method: HttpRequest, url: string, body?: any) {
         method: `${method}`,
         headers: headers,
         body: json
-    });
+    })
 
-    const resp = await rawResp.json();
+    const resp = await rawResp.json()
 
-    console.log(`rqId=${rqId} - End HTTP request with response: ${JSON.stringify(resp)}`);
+    console.log(`rqId=${rqId} - End HTTP request with response: ${JSON.stringify(resp)}`)
 
-    return resp;
+    return resp
 }
 
 export const getAllBooks = async () => {

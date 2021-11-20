@@ -2,18 +2,14 @@
 
 Страница [IT Fest 2021](https://itcube61.ru/)
 
-- Запуск бэкенда
+### Запуск проекта
 
+Для запуска необходимо установить [Docker](https://docs.docker.com/desktop/) и [Docker Compose](https://docs.docker.com/compose/install/).
 
-Открыть ```./backend``` в терминале. Собрать проект (требуется установленая Java 11 и Apache Maven) ```mvn clean package```.
-Запустить проект ```java -jar backend/target/backend-0.0.1-SNAPSHOT.jar```.
+Для запуска ввести в терминале ```docker-compose up -d```
 
-- Запуск фронтенда
+Открыть в браузере [http://localhost:8090/](http://localhost:8090/)
 
-Открыть ```./frontend``` в терминале. Собрать проекта (требуется NodeJS) ```npm install```. Запустить live-server ```npm run start```.
+### Остановка проекта
 
-Для запуска фронтеда с мок-сервером wiremock:
-1. В файле ```frontend/src/BooksApiClient.ts``` указать tcp-порт 8081
-2. Запустить в терминале мок-сервер ```./wiremock/run_wiremock.sh```
-
-- Запуск бэкенда через docker-compose. В корне проекта выполнить ```docker-compose up -d```
+Для остановки ввести в терминале ```docker-compose down```

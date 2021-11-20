@@ -1,16 +1,14 @@
-FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim as build
-WORKDIR /workspace/app
+FROM maven as build
+WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
+COPY src src/
 COPY pom.xml .
-COPY src src
 
-CMD ./mvnw clean package
-CMD cp ./target/backend-0.0.1-SNAPSHOT.jar ./backend-0.0.1-SNAPSHOT.jar
+RUN mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true clean package
+RUN cp ./target/backend-*.jar ./backend.jar
 
 
 FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim
-WORKDIR /workspace/app
-COPY --from=build /workspace/app/backend-0.0.1-SNAPSHOT.jar ./backend-0.0.1-SNAPSHOT.jar
-ENTRYPOINT ["java","-jar","backend-0.0.1-SNAPSHOT.jar.jar"]
+WORKDIR /app
+COPY --from=build /app/backend.jar ./backend.jar
+ENTRYPOINT ["java","-jar","backend.jar"]

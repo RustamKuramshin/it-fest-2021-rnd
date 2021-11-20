@@ -68,6 +68,8 @@ export default class BooksTable extends React.PureComponent {
     componentDidMount() {
         getAllBooks().then((books: Book[]) => {
             this.setState({data: books})
+        }).catch(er => {
+            console.error(er)
         })
     }
 

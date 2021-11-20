@@ -15,3 +15,5 @@
 Для запуска фронтеда с мок-сервером wiremock:
 1. В файле ```frontend/src/BooksApiClient.ts``` указать tcp-порт 8081
 2. Запустить в терминале мок-сервер ```./wiremock/run_wiremock.sh```
+
+- Запуск бэкенда через docker-compose. В корне проекта выполнить ```docker-compose up -d```

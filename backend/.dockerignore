@@ -1,0 +1,7 @@
+.mvn
+target
+.dockerignore
+.gitignore
+mvnw
+mvnw.cmd
+test-backend.http

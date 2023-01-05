@@ -8,7 +8,7 @@ RUN mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=tru
 RUN cp ./target/backend-*.jar ./backend.jar
 
 
-FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-alpine-slim
+FROM adoptopenjdk:11.0.9_11-jdk-hotspot-focal
 WORKDIR /app
 COPY --from=build /app/backend.jar ./backend.jar
 ENTRYPOINT ["java","-jar","backend.jar"]
